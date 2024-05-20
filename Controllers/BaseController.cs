@@ -3,6 +3,11 @@ using Serilog;
 using System.Text.Json;
 
 namespace GenericServer.Controllers;
+/// <summary>
+/// Base controller providing CRUD operations for entities.
+/// </summary>
+/// <typeparam name="T">The type of entity managed by the controller.</typeparam>
+/// <typeparam name="TDTO">The DTO (Data Transfer Object) type for the entity.</typeparam>
 
 [Route("api/[controller]")]
 [ApiController]
@@ -10,6 +15,11 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
 {
     private readonly IBaseRepository<T> _baseRepository = baseRepository;
 
+    // GET: api/controller/GetAll
+    /// <summary>
+    /// Retrieves all entities.
+    /// </summary>
+    /// <returns>A list of all entities.</returns>
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAll()
     {
@@ -29,6 +39,12 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
         }
     }
 
+    // GET: api/controller/GetAllWithIncludes
+    /// <summary>
+    /// Retrieves all entities with specified related entities included.
+    /// </summary>
+    /// <param name="includes">The related entities to include.</param>
+    /// <returns>A list of all entities with specified related entities included.</returns>
     [HttpGet("GetAllWithIncludes")]
     public async Task<IActionResult> GetAllWithIncludes([FromQuery]params string[] includes)
     {
@@ -47,6 +63,12 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
         }
     }
 
+    // GET: api/controller/{id}
+    /// <summary>
+    /// Retrieves an entity by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the entity to retrieve.</param>
+    /// <returns>The entity with the specified ID.</returns>
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -65,6 +87,14 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
             return StatusCode(500, ex.Message);
         }
     }
+
+    // GET: api/controller/WithIncludes/{id}
+    /// <summary>
+    /// Retrieves an entity by its ID with specified related entities included.
+    /// </summary>
+    /// <param name="id">The ID of the entity to retrieve.</param>
+    /// <param name="includes">The related entities to include.</param>
+    /// <returns>The entity with the specified ID and related entities included.</returns>
     [HttpGet("WithIncludes/{id}")]
     public async Task<IActionResult> GetByIdWithIncludesAsync(Guid id,[FromQuery] params string[] includes)
     {
@@ -83,6 +113,12 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
         }
     }
 
+    // POST: api/controller
+    /// <summary>
+    /// Creates a new entity.
+    /// </summary>
+    /// <param name="entity">The entity to create.</param>
+    /// <returns>The created entity.</returns>
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] TDTO entity)
     {
@@ -110,7 +146,13 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
     }
 
 
-
+    // PUT: api/controller/{id}
+    /// <summary>
+    /// Updates an entity by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the entity to update.</param>
+    /// <param name="entity">The updated entity.</param>
+    /// <returns>The updated entity.</returns>
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(Guid id, [FromBody] TDTO entity)
     {
@@ -146,7 +188,12 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
 
     }
 
-    // DELETE api/<WalletsController>/5
+    // DELETE: api/controller/{id}
+    /// <summary>
+    /// Deletes an entity by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the entity to delete.</param>
+    /// <returns>The deleted entity.</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -176,6 +223,13 @@ public class BaseController<T,TDTO>(IBaseRepository<T> baseRepository) : Control
         }
     }
 
+    // GET: api/controller/Find
+    /// <summary>
+    /// Finds entities by a specified property and value.
+    /// </summary>
+    /// <param name="key">The property name to search by.</param>
+    /// <param name="value">The value to search for.</param>
+    /// <returns>A list of entities that match the search criteria.</returns>
     [HttpGet("Find")]
     public async Task<IActionResult> Find([FromQuery] string key, string? value)
     {
